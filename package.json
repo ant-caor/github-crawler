@@ -1,0 +1,18 @@
+{
+  "name": "github-pr-comment-to-txt",
+  "version": "1.0.0",
+  "description": "",
+  "main": "bin/index.js",
+  "scripts": {
+    "start": "node ."
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^5.1.2",
+    "dotenv": "^16.0.3",
+    "inquirer": "^9.1.4",
+    "octokit": "^2.0.9"
+  },
+  "type": "module"
+}
