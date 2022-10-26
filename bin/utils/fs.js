@@ -15,6 +15,9 @@ const savePRFile = (data, header, comments) => {
   writeStream.write(`PR Title: ${header.title}`);
   writeStream.write("\n");
   writeStream.write(`PR Description:\n ${header.description}`);
+  writeStream.write("\n");
+  writeStream.write(`PR comment count: ${header.commentCount}`);
+  writeStream.write(`PR review comment count: ${header.reviewCommentCount}`);
   writeStream.write("\n\n\nComments: \n");
   writeStream.write("------------------------------ \n");
 
@@ -22,6 +25,8 @@ const savePRFile = (data, header, comments) => {
     writeStream.write(`Author: ${comment.author}`);
     writeStream.write("\n");
     writeStream.write(`Content: ${comment.content}\n`);
+    writeStream.write("\n");
+    writeStream.write(`Diff hunk: ${comment.diff_hunk}\n`);
     writeStream.write("------------------------------ \n");
   });
 
