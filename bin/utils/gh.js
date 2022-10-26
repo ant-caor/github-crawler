@@ -4,6 +4,7 @@ import * as dotenv from "dotenv";
 
 dotenv.config();
 
+// More info about oktokit: https://octokit.github.io/rest.js/v19
 const octokit = new Octokit({
   auth: process.env.GH_TOKEN,
 });
@@ -22,6 +23,8 @@ const getPRHeader = async (data) => {
       return {
         title: result.data.title,
         description: result.data.body,
+        commentCount: result.data.comments,
+        reviewCommentCount: result.data.review_comments,
       };
     });
 };
