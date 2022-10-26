@@ -1,4 +1,4 @@
-## Github crawler
+## Github crawler
 
 Library to transform PR comments into txt files.
 
