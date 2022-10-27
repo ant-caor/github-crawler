@@ -20,6 +20,11 @@ const getPRHeader = async (data) => {
     .then((result) => {
       log(chalk.bold.red("PR Title: "), result.data.title);
       log(chalk.bold.red("PR Description: \n"), result.data.body);
+      log(chalk.bold.red("PR comment count: "), result.data.comments);
+      log(
+        chalk.bold.red("PR review comment count: "),
+        result.data.review_comments
+      );
       return {
         title: result.data.title,
         description: result.data.body,
@@ -43,10 +48,13 @@ const getPRComments = async (data) => {
       result.data.forEach((comment) => {
         log(chalk.bold.green.inverse("\n------ Comment ------\n"));
         log(chalk.bold.red("Author: "), comment.user.login, "\n");
-        log(comment.body);
+        log(chalk.bold.red("Diff:\n"), comment.diff_hunk);
+        log("\n");
+        log(chalk.bold.yellow.inverse(comment.body));
         comments.push({
           author: comment.user.login,
           content: comment.body,
+          diff: comment.diff_hunk,
         });
       });
       return comments;

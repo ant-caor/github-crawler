@@ -26,7 +26,7 @@ const savePRFile = (data, header, comments) => {
     writeStream.write("\n");
     writeStream.write(`Content: ${comment.content}\n`);
     writeStream.write("\n");
-    writeStream.write(`Diff hunk: ${comment.diff_hunk}\n`);
+    writeStream.write(`Diff hunk: ${comment.diff}\n`);
     writeStream.write("------------------------------ \n");
   });
 
