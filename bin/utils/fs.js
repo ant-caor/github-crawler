@@ -23,7 +23,7 @@ const savePRFile = (data, header, comments, issueComments) => {
 
   log(
     chalk.bold.yellow(
-      `\n\n\nPR info file created successfully at: ${file.toLowerCase()}\n`
+      `\nPR info file created successfully at: ${file.toLowerCase()}\n`
     )
   );
 };
