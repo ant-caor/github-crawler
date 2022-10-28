@@ -3,8 +3,8 @@ import chalk from "chalk";
 
 const log = console.log;
 
-const savePRFile = (data, header, comments) => {
-  const file = `prs/${data.owner}_${data.repo}_${data.pr}.txt`;
+const savePRFile = (data, header, comments, issueComments) => {
+  const file = `prs/${data.owner}_${data.repo}_${data.pr}.json`;
 
   if (!fs.existsSync("prs")) {
     fs.mkdirSync("prs");
@@ -12,24 +12,13 @@ const savePRFile = (data, header, comments) => {
 
   var writeStream = fs.createWriteStream(file.toLowerCase(), "utf8");
 
-  writeStream.write(`PR Title: ${header.title}`);
-  writeStream.write("\n");
-  writeStream.write(`PR Description:\n ${header.description}`);
-  writeStream.write("\n");
-  writeStream.write(`PR comment count: ${header.commentCount}`);
-  writeStream.write(`PR review comment count: ${header.reviewCommentCount}`);
-  writeStream.write("\n\n\nComments: \n");
-  writeStream.write("------------------------------ \n");
+  const pr = {
+    header: header,
+    comments: comments,
+    issueComments: issueComments,
+  };
 
-  comments.forEach((comment) => {
-    writeStream.write(`Author: ${comment.author}`);
-    writeStream.write("\n");
-    writeStream.write(`Content: ${comment.content}\n`);
-    writeStream.write("\n");
-    writeStream.write(`Diff hunk: ${comment.diff}\n`);
-    writeStream.write("------------------------------ \n");
-  });
-
+  writeStream.write(JSON.stringify(pr));
   writeStream.end();
 
   log(
