@@ -24,7 +24,8 @@ const queryParams = () => {
     {
       name: "pr",
       type: "input",
-      message: "Which is the pull request number?",
+      message:
+        "Which is the pull request number? [Enter 'all' to download all repo prs]",
       default: pr,
     },
   ];
