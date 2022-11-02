@@ -37,10 +37,9 @@ const getPRInfo = async (data) => {
     header = await getPRHeader(data);
     comments = await getPRComments(data);
     issueComments = await getPRIssueComments(data);
+    savePRFile(data, header, comments, issueComments);
     // TODO Sort nested comments by inReplyToId.
   }
-
-  savePRFile(data, header, comments, issueComments);
 };
 
 getPRInfo(await queryParams());
