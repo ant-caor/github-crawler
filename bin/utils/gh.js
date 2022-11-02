@@ -34,10 +34,7 @@ const getPRS = async (data) => {
           const prReviewCommentCount = pr.review_comments;
           const prTotalComments = prCommentCount + prReviewCommentCount;
           // TODO check if we can do a better filtering to avoid saving non interesting or bot comments.
-          if (
-            blackList.some((w) => prTitle.includes(w)) ||
-            prTotalComments < 2
-          ) {
+          if (prTotalComments >= 1) {
             prs.push({
               number: prNumber,
               title: prTitle,
