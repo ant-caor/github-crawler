@@ -4,6 +4,7 @@ import * as dotenv from "dotenv";
 dotenv.config();
 
 const blackList = ["[Snyk]", "Bump"];
+const pageSize = 100;
 
 // More info about oktokit: https://octokit.github.io/rest.js/v19
 const octokit = new Octokit({
@@ -14,42 +15,37 @@ const getPRS = async (data) => {
   const prs = [];
   let next = true;
   let page = 1;
+  console.log(
+    `Checking prs (this may take some minutes depending on the total amount of PRs)...`
+  );
 
   while (next) {
     await octokit
       .request(
-        `GET /repos/${data.owner}/${data.repo}/pulls?page=${page}&state=all`,
+        `GET /repos/${data.owner}/${data.repo}/pulls?page=${page}&per_page=${pageSize}&state=all`,
         {
           owner: data.owner,
           repo: data.repo,
         }
       )
       .then((result) => {
-        console.log(`Getting page: ${page}...`);
         result.data.forEach((pr) => {
           const prNumber = pr.number;
           const prTitle = pr.title;
           const prDescription = pr.body;
-          const prCommentCount = pr.comments;
-          const prReviewCommentCount = pr.review_comments;
-          const prTotalComments = prCommentCount + prReviewCommentCount;
           // TODO check if we can do a better filtering to avoid saving non interesting or bot comments.
-          if (prTotalComments >= 1) {
+          if (!blackList.some((w) => prTitle.includes(w))) {
             prs.push({
               number: prNumber,
               title: prTitle,
               description: prDescription,
-              commentCount: prCommentCount,
-              reviewCommentCount: prReviewCommentCount,
             });
           }
         });
         page++;
-        next = result.data.length === 30;
+        next = result.data.length === pageSize;
       });
   }
-
-  console.log("Interesting prs count: ", prs.length);
   return prs;
 };
 
@@ -87,7 +83,7 @@ const getPRComments = async (data) => {
           inReplyToId: comment.in_reply_to_id,
           createdAt: comment.created_at,
           updatedAt: comment.updated_at,
-          author: comment.user.login,
+          author: comment.user?.login,
           content: comment.body,
           diff: comment.diff_hunk,
         });
