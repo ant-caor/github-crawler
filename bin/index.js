@@ -15,7 +15,7 @@ const getPRInfo = async (data) => {
 
   if (data.pr === "all") {
     const headers = await getPRS(data);
-    headers.forEach(async (header) => {
+    headers.forEach(async (header, index) => {
       comments = await getPRComments({
         owner: data.owner,
         repo: data.repo,
@@ -26,6 +26,11 @@ const getPRInfo = async (data) => {
         repo: data.repo,
         pr: header.number,
       });
+      console.log(
+        `Saving PRs ${parseInt(
+          100 - ((headers.length - index) / headers.length) * 100
+        )}%`
+      );
       savePRFile(
         { owner: data.owner, repo: data.repo, pr: header.number },
         header,
