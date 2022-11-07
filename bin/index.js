@@ -5,23 +5,19 @@ import {
   getPRIssueComments,
   getPRS,
 } from "./utils/gh.js";
-import { savePRFile } from "./utils/fs.js";
-import { queryParams } from "./utils/prompt.js";
+import { savePRFile, readPRsDir } from "./utils/fs.js";
+import { queryAction, querySavePRParams } from "./utils/prompt.js";
 
 const getPRInfo = async (data) => {
-  let header;
-  let comments;
-  let issueComments;
-
   if (data.pr === "all") {
     const headers = await getPRS(data);
     headers.forEach(async (header, index) => {
-      comments = await getPRComments({
+      const comments = await getPRComments({
         owner: data.owner,
         repo: data.repo,
         pr: header.number,
       });
-      issueComments = await getPRIssueComments({
+      const issueComments = await getPRIssueComments({
         owner: data.owner,
         repo: data.repo,
         pr: header.number,
@@ -39,12 +35,27 @@ const getPRInfo = async (data) => {
       );
     });
   } else {
-    header = await getPRHeader(data);
-    comments = await getPRComments(data);
-    issueComments = await getPRIssueComments(data);
+    const header = await getPRHeader(data);
+    const comments = await getPRComments(data);
+    const issueComments = await getPRIssueComments(data);
     savePRFile(data, header, comments, issueComments);
-    // TODO Sort nested comments by inReplyToId.
   }
 };
 
-getPRInfo(await queryParams());
+const params = await queryAction();
+console.log("Executing: ", params.action);
+switch (params.action) {
+  case "process":
+    /*
+    todo: 
+      1 - Read the PRs folder and parse JSONs into POJOs. (Here we have almost 2000 prs)
+      2 - Filter prs without comments. +
+      3 - Sort nested comments by inReplyToId. ++++
+      4 - Save processed POJOs into processed_prs. (There should be only the most interested ones)
+    */
+    readPRsDir();
+    break;
+  case "save":
+    getPRInfo(await querySavePRParams());
+    break;
+}
