@@ -28,4 +28,23 @@ const savePRFile = (data, header, comments, issueComments) => {
   );
 };
 
-export { savePRFile };
+const readPRsDir = () => {
+  console.log("Reading PRs dir...");
+  const dir = "prs";
+
+  fs.readdir(dir, (err, files) => {
+    if (err) throw error;
+
+    files.forEach((file) => {
+      const content = fs.readFileSync(`${dir}/${file}`, { encoding: "utf-8" });
+      const pr = JSON.parse(content, null, 2);
+
+      console.log("Reading pr with number: ", pr.header.number);
+      console.log("Reading pr with title: ", pr.header.title);
+      console.log(`This pr has: ${pr.comments.length} comments`);
+      console.log(`This pr has: ${pr.issueComments.length} issue comments`);
+    });
+  });
+};
+
+export { savePRFile, readPRsDir };
