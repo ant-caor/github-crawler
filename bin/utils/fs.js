@@ -3,7 +3,7 @@ import chalk from "chalk";
 
 const log = console.log;
 
-const savePRFile = (data, header, comments, issueComments) => {
+const savePRFile = (data, header, comments, issueComments, reviews) => {
   const file = `prs/${data.owner}_${data.repo}_${data.pr}.json`;
 
   if (!fs.existsSync("prs")) {
@@ -16,6 +16,7 @@ const savePRFile = (data, header, comments, issueComments) => {
     header: header,
     comments: comments,
     issueComments: issueComments,
+    reviews: reviews,
   };
 
   writeStream.write(JSON.stringify(pr));

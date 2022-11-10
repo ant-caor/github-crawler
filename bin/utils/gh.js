@@ -66,6 +66,13 @@ const getPRHeader = async (data) => {
     });
 };
 
+/**
+ * Getter of PR review comments.
+ * @param {owner} string: Owner of the repository.
+ * @param {repo} string: Specific repository.
+ * @param {pr} string: Specific pull request number.
+ * @returns PR review comments.
+ */
 const getPRComments = async (data) => {
   return octokit
     .request(
@@ -81,6 +88,7 @@ const getPRComments = async (data) => {
         comments.push({
           id: comment.id,
           inReplyToId: comment.in_reply_to_id,
+          pullRequestReviewId: comment.pull_request_review_id,
           createdAt: comment.created_at,
           updatedAt: comment.updated_at,
           author: comment.user?.login,
@@ -92,6 +100,13 @@ const getPRComments = async (data) => {
     });
 };
 
+/**
+ * Getter of PR issue comments.
+ * @param {owner} string: Owner of the repository.
+ * @param {repo} string: Specific repository.
+ * @param {pr} string: Specific pull request number.
+ * @returns PR issue comments.
+ */
 const getPRIssueComments = async (data) => {
   return octokit
     .request(
@@ -105,12 +120,47 @@ const getPRIssueComments = async (data) => {
       const comments = [];
       result.data.forEach((comment) => {
         comments.push({
+          id: comment.id,
+          inReplyToId: comment.in_reply_to_id,
+          pullRequestReviewId: comment.pull_request_review_id,
           author: comment.user.login,
           content: comment.body,
+          createdAt: comment.created_at,
+          updatedAt: comment.updated_at,
         });
       });
       return comments;
     });
 };
 
-export { getPRComments, getPRHeader, getPRIssueComments, getPRS };
+/**
+ * Getter of PR reviews.
+ * Please, don't confuse it with review comments.
+ * More info at: https://docs.github.com/en/rest/pulls/reviews#list-reviews-for-a-pull-request
+ * @param {owner} string: Owner of the repository.
+ * @param {repo} string: Specific repository.
+ * @param {pr} string: Specific pull request number.
+ * @returns PR reviews.
+ */
+const getPRReviews = async (data) => {
+  return octokit
+    .request(`GET /repos/${data.owner}/${data.repo}/pulls/${data.pr}/reviews`, {
+      owner: data.owner,
+      repo: data.repo,
+    })
+    .then((result) => {
+      const reviews = [];
+      result.data.forEach((review) => {
+        reviews.push({
+          id: review.id,
+          author: review.user.login,
+          content: review.body,
+          state: review.state,
+          submittedAt: review.submitted_at,
+        });
+      });
+      return reviews;
+    });
+};
+
+export { getPRComments, getPRHeader, getPRIssueComments, getPRReviews, getPRS };

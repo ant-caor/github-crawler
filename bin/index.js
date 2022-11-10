@@ -4,6 +4,7 @@ import {
   getPRComments,
   getPRIssueComments,
   getPRS,
+  getPRReviews,
 } from "./utils/gh.js";
 import { savePRFile, readPRsDir } from "./utils/fs.js";
 import { queryAction, querySavePRParams } from "./utils/prompt.js";
@@ -12,33 +13,28 @@ const getPRInfo = async (data) => {
   if (data.pr === "all") {
     const headers = await getPRS(data);
     headers.forEach(async (header, index) => {
-      const comments = await getPRComments({
-        owner: data.owner,
-        repo: data.repo,
-        pr: header.number,
-      });
-      const issueComments = await getPRIssueComments({
-        owner: data.owner,
-        repo: data.repo,
-        pr: header.number,
-      });
+      // Here we download all the comments for all PRs in the repo.
+      const params = { owner: data.owner, repo: data.repo, pr: header.number };
+      const comments = await getPRComments(params);
+      const issueComments = await getPRIssueComments(params);
+      const reviews = await getPRReviews(params);
+      console.log(`Normal comments: ${comments?.length}`);
+      console.log(`Issue comments: ${issueComments?.length}`);
+      console.log(`Reviews: ${reviews?.length}`);
       console.log(
         `Saving PRs ${parseInt(
           100 - ((headers.length - index) / headers.length) * 100
         )}%`
       );
-      savePRFile(
-        { owner: data.owner, repo: data.repo, pr: header.number },
-        header,
-        comments,
-        issueComments
-      );
+      savePRFile(params, header, comments, issueComments, reviews);
     });
   } else {
+    // Here we download all the comments for a specific PR in the repo.
     const header = await getPRHeader(data);
     const comments = await getPRComments(data);
     const issueComments = await getPRIssueComments(data);
-    savePRFile(data, header, comments, issueComments);
+    const reviews = await getPRReviews(data);
+    savePRFile(data, header, comments, issueComments, reviews);
   }
 };
 
