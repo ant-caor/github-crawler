@@ -8,6 +8,7 @@ import {
 } from "./utils/gh.js";
 import { savePRFile, readPRsDir } from "./utils/fs.js";
 import { queryAction, querySavePRParams } from "./utils/prompt.js";
+import { processPRs } from "./utils/process_prs.js";
 
 const getPRInfo = async (data) => {
   if (data.pr === "all") {
@@ -42,14 +43,19 @@ const params = await queryAction();
 console.log("Executing: ", params.action);
 switch (params.action) {
   case "process":
-    /*
-    todo: 
-      1 - Read the PRs folder and parse JSONs into POJOs. (Here we have almost 2000 prs)
-      2 - Filter prs without comments. +
-      3 - Sort nested comments by inReplyToId. ++++
-      4 - Save processed POJOs into processed_prs. (There should be only the most interested ones)
-    */
-    readPRsDir();
+    const prs = readPRsDir();
+    // This prs array contains pr elements with the following fields: owner, repo and data (with the json data)
+    const processedPRs = processPRs(prs);
+    processedPRs.forEach((pr) => {
+      savePRFile(
+        { owner: pr.owner, repo: pr.repo, pr: pr.data.header.number },
+        pr.data.header,
+        pr.data.comments,
+        pr.data.issueComments,
+        pr.data.reviews,
+        "processed_prs"
+      );
+    });
     break;
   case "save":
     getPRInfo(await querySavePRParams());
