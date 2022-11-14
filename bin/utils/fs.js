@@ -13,8 +13,15 @@ const savePRFile = (
 ) => {
   const file = `${dir}/${data.owner}/${data.repo}/${data.pr}.json`;
 
-  if (!fs.existsSync(`${dir}/${data.owner}/${data.repo}`)) {
+  if (!fs.existsSync(dir)) {
     fs.mkdirSync(`${dir}`);
+  }
+
+  if (!fs.existsSync(`${dir}/${data.owner}`)) {
+    fs.mkdirSync(`${dir}/${data.owner}`);
+  }
+
+  if (!fs.existsSync(`${dir}/${data.owner}/${data.repo}`)) {
     fs.mkdirSync(`${dir}/${data.owner}`);
     fs.mkdirSync(`${dir}/${data.owner}/${data.repo}`);
   }
