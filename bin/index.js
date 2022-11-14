@@ -40,7 +40,6 @@ const getPRInfo = async (data) => {
 };
 
 const params = await queryAction();
-console.log("Executing: ", params.action);
 switch (params.action) {
   case "process":
     const prs = readPRsDir();
