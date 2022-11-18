@@ -22,7 +22,6 @@ const savePRFile = (
   }
 
   if (!fs.existsSync(`${dir}/${data.owner}/${data.repo}`)) {
-    fs.mkdirSync(`${dir}/${data.owner}`);
     fs.mkdirSync(`${dir}/${data.owner}/${data.repo}`);
   }
 
